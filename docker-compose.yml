@@ -1,0 +1,53 @@
+services:
+  ufpel-bda-site:
+    container_name: ufpel-bda-site
+    build:
+      context: .
+      dockerfile: Dockerfile
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - ufpel-bda-network
+    depends_on:
+      - nginx
+
+  ufpel-bda-mysql:
+    image: mysql:latest
+    container_name: ufpel-bda-mysql
+    environment:
+      MYSQL_DATABASE: mysql
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_USER: admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - ufpel-bda-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./:/var/www
+      - ./nginx:/etc/nginx/conf.d/
+    networks:
+      - ufpel-bda-network
+
+  ufpel-bda-redis:
+    image: redis:latest
+    hostname: cache
+    container_name: ufpel-bda-redis
+    ports:
+      - '6379:6379'
+      
+networks:
+  ufpel-bda-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
