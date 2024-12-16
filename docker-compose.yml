@@ -11,15 +11,17 @@ services:
       - ufpel-bda-network
     depends_on:
       - nginx
+      - ufpel-bda-mysql
 
   ufpel-bda-mysql:
-    image: mysql:latest
+    image: mysql:8.0.29
+    #image: mysql:latest
     container_name: ufpel-bda-mysql
     environment:
-      MYSQL_DATABASE: mysql
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_PASSWORD: admin
-      MYSQL_USER: admin
+      MYSQL_DATABASE: ufpel-bda
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
     volumes:
