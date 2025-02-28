@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(false);
             $table->integer('quantity')->default(0);
             $table->integer('quantity_available')->default(0);
+            $table->json('other_information')->nullable();
             $table->string('name');
             $table->text('description');
             $table->double('price');
