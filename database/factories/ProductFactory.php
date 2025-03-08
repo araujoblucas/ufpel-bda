@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProductFactory extends Factory
 {
+    protected $model = Product::class;
+
     /**
      * Define the model's default state.
      *
@@ -19,7 +22,7 @@ class ProductFactory extends Factory
     {
         $quantity = $this->faker->numberBetween(0, 50);
         return [
-            'owner_id' => fn ($attributes) => $attributes['owner_id'] ?? User::factory()->create()->id,
+            'owner_id' => User::factory()->create()->id,
             'is_active' => true,
             'quantity' => $quantity,
             'quantity_available' => $quantity - $this->faker->numberBetween(0, $quantity),

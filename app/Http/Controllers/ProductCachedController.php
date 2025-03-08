@@ -16,9 +16,8 @@ class ProductCachedController extends Controller
     public function show()
     {
         $products = $this->productService->getFirst();
-        $otherInfo = json_decode($products['other_information']);
 
-        return view("product.show", compact("products", "otherInfo"));
+        return view("product.show", ["products" => $products, "otherInfo" => $products['other_information']]);
     }
 
     public function list()
@@ -36,11 +35,11 @@ class ProductCachedController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function update()
+    public function edit()
     {
         $id = $this->productService->getFirst()['id'];
 
-        $this->productService-> edit($id);
+        $this->productService->edit($id);
 
         return response()->json("Product updated successfully");
     }
@@ -63,9 +62,11 @@ class ProductCachedController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(string $id)
+    public function delete()
     {
         $product = Product::latest()->first()?->toArray();
         $this->productService->delete($product['id']);
+
+        return response()->json("Product deleted successfully");
     }
 }

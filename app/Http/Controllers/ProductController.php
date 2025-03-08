@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Services\ProductService;
-use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -37,11 +36,11 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function update()
+    public function edit()
     {
         $id = $this->productService->getFirst()['id'];
 
-        $this->productService-> edit($id);
+        $this->productService->edit($id);
 
         return response()->json("Product updated successfully");
     }
@@ -64,9 +63,11 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(string $id)
+    public function delete()
     {
         $product = Product::latest()->first()?->toArray();
         $this->productService->delete($product['id']);
+
+        return response()->json("Product deleted successfully");
     }
 }

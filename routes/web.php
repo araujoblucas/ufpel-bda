@@ -5,11 +5,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
 Route::prefix('product')->group(function () {
-    Route::get("/show", [ProductController::class, 'show'])->name("show_product");
-    Route::get("/list", [ProductController::class, 'list'])->name("list_products");
-    Route::get("/create", [ProductController::class, 'create'])->name("create_product");
-    Route::get("/edit", [ProductController::class, 'edit'])->name("edit_product");
-    Route::get("/delete", [ProductController::class, 'delete'])->name("delete_product");
+    Route::get("/show", [ProductController::class, 'show'])->name("cached.show_product");
+    Route::get("/list", [ProductController::class, 'list'])->name("cached.list_products");
+    Route::get("/create", [ProductController::class, 'create'])->name("cached.create_product");
+    Route::get("/edit", [ProductController::class, 'edit'])->name("cached.edit_product");
+    Route::get("/delete", [ProductController::class, 'delete'])->name("cached.delete_product");
 });
 
 Route::prefix('cached/product')->group(function () {

@@ -7,14 +7,16 @@ use Illuminate\Support\Arr;
 
 class ProductCacheService
 {
-    public function __construct(private ProductService $productService)
+    public function __construct(private readonly ProductService $productService)
     {
     }
 
     public function getFirst(): ?array
     {
-        return cache()->rememberForever('product_first', function () {
-            return $this->productService->getFirst();
+        return cache()->rememberForever('product_first_1', function () {
+            $products = $this->productService->getFirst();
+            $products['other_information'] = json_decode($products['other_information']);
+            return $products;
         });
 
     }

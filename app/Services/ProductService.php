@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Product;
+use Database\Factories\ProductFactory;
 use Illuminate\Support\Arr;
 
 class ProductService
@@ -31,7 +32,7 @@ class ProductService
 
     public function create()
     {
-        return Product::factory()->create();
+        return ProductFactory::new()->create();
     }
 
     public function delete(int $id)
