@@ -19,8 +19,14 @@ RUN apk update && apk add --no-cache \
     redis \
     net-tools \
     procps \
+    npm \
+    autoconf \
+    make \
+    g++ \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip \
+    && pecl install redis \
+    && docker-php-ext-enable redis
 
 # Definir o diretório de trabalho
 WORKDIR /var/www

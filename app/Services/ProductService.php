@@ -2,25 +2,42 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Product;
+use Database\Factories\ProductFactory;
+use Illuminate\Support\Arr;
 
 class ProductService
 {
-
-    public function getProductNearbyToExpire($term = '')
+    public function getFirst(): ?array
     {
-        $result = DB::select("SELECT id, JSON_UNQUOTE(JSON_EXTRACT(product, '$.nome')) AS nome,
-                                            JSON_UNQUOTE(JSON_EXTRACT(product, '$.validade.date')) AS validade
-                                            FROM products
-                                            WHERE JSON_UNQUOTE(JSON_EXTRACT(product, '$.validade.date'))
-                                            BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 30 DAY)
-                                            and JSON_UNQUOTE(JSON_EXTRACT(product, '$.marca')) like '%$term%'
-                                            ORDER BY JSON_UNQUOTE(JSON_EXTRACT(product, '$.validate.date')) DESC,
-                                                     JSON_UNQUOTE(JSON_EXTRACT(product, '$.data_fabricacao')) DESC
-                                            LIMIT 20
-                                            ");
-
-
-        return $result->toArray ?? [];
+        return Product::first()?->toArray();
     }
+
+    public function getListAvailable(): ?array
+    {
+        return Product::where('is_active', true)
+            ->where('quantity_available', '>', 0)
+            ->whereRaw("JSON_UNQUOTE(JSON_EXTRACT(other_information, '$.due_date')) >= ?", [now()->toDateString()])
+            ->limit(1000)->get()?->toArray();
+
+    }
+
+    public function edit(int $id)
+    {
+        return Product::where('id', $id)
+            ->update([
+                'name' =>  Arr::random(config('products_names')),
+            ]);
+    }
+
+    public function create()
+    {
+        return ProductFactory::new()->create();
+    }
+
+    public function delete(int $id)
+    {
+        return Product::where('id', $id)->delete();
+    }
+
 }

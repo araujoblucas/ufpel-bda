@@ -11,15 +11,17 @@ services:
       - ufpel-bda-network
     depends_on:
       - nginx
+      - ufpel-bda-mysql
+      - ufpel-bda-redis
 
   ufpel-bda-mysql:
-    image: mysql:latest
+    image: mysql:8.0.29
     container_name: ufpel-bda-mysql
     environment:
-      MYSQL_DATABASE: mysql
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_PASSWORD: admin
-      MYSQL_USER: admin
+      MYSQL_DATABASE: ufpel-bda
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_PASSWORD: 'root'
+      MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
     volumes:
@@ -44,7 +46,18 @@ services:
     container_name: ufpel-bda-redis
     ports:
       - '6379:6379'
-      
+    networks:
+      - ufpel-bda-network
+
+  k6:
+    image: grafana/k6
+    container_name: k6
+    volumes:
+      - ./scripts:/scripts
+    networks:
+      - ufpel-bda-network
+    command: ["run", "/scripts/test.js"]  # Executa o teste automaticamente
+
 networks:
   ufpel-bda-network:
     driver: bridge

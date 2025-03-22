@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -10,67 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ProductFactory extends Factory
 {
-
-    private $preFixedNames = [
-        'Loja do ',
-        'Padaria do ',
-        'Lancheria do ',
-        'Padaria do ',
-        'Mercado do ',
-    ];
-
-    private $names = [
-        "Bolo de Chocolate",
-        "Pão Integral",
-        "Suco de Laranja",
-        "Leite Integral",
-        "Café Torrado",
-        "Chocolate ao Leite",
-        "Biscoito Recheado",
-        "Margarina Sem Sal",
-        "Queijo Mussarela",
-        "Iogurte Natural",
-        "Arroz Branco",
-        "Feijão Carioca",
-        "Macarrão Espaguete",
-        "Molho de Tomate",
-        "Extrato de Tomate",
-        "Azeite Extra Virgem",
-        "Vinagre de Maçã",
-        "Sabonete Líquido",
-        "Shampoo",
-        "Condicionador",
-        "Creme Dental",
-        "Escova de Dentes",
-        "Desodorante",
-        "Perfume",
-        "Creme Hidratante",
-        "Protetor Solar",
-        "Sabonete em Barra",
-        "Gel de Banho",
-        "Loção Corporal",
-        "Papel Higiênico",
-        "Toalha de Papel",
-        "Detergente Líquido",
-        "Esponja de Cozinha",
-        "Limpa Vidros",
-        "Desinfetante",
-        "Água Sanitária",
-        "Cereal Matinal",
-        "Bolo de Fubá",
-        "Pipoca de Micro-ondas",
-        "Biscoito de Água e Sal",
-        "Café Solúvel",
-        "Chá de Camomila",
-        "Achocolatado",
-        "Manteiga",
-        "Refrigerante",
-        "Sopa Instantânea",
-        "Iogurte Grego",
-        "Granola Natural",
-        "Bebida Energética",
-        "Água Mineral"
-    ];
+    protected $model = Product::class;
 
     /**
      * Define the model's default state.
@@ -79,31 +20,19 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
+        $quantity = $this->faker->numberBetween(0, 50);
         return [
-            'user_id' => $this->faker->numberBetween(User::query()->orderBy('id', 'asc')->value('id'), User::query()->orderBy('id', 'desc')->value('id')-1),
-            'product' => json_encode(
-                [
-                    "nome" => $this->faker->randomElement($this->names),
-                    "descricao" => $this->faker->text(254),
-                    "tipo" => "Alimento",
-                    "categoria" => "Doces",
-                    "marca" => $this->faker->randomElement($this->preFixedNames) . $this->faker->name('male'),
-                    "modelo" => "Tradicional",
-                    "validade" => $this->faker->dateTimeBetween('-3 months', '+3 months'),
-                    "data_fabricacao" => $this->faker->dateTimeBetween('-3 months', 'yesterday'),
-                    "preco" => $this->faker->randomFloat(2),
-                    "estoque" => $this->faker->numberBetween(0, 50),
-                    "dimensoes" => [
-                        "altura" => $this->faker->numberBetween(5, 100) . "cm",
-                        "largura" => $this->faker->numberBetween(5, 100) . "cm",
-                        "profundidade" => $this->faker->numberBetween(5, 100) . "cm"
-                    ],
-                    "peso" => $this->faker->numberBetween(100, 950) . 'g',
-                    "status" => $this->faker->randomElement(["ativo", "inativo"]),
-                ]
-            ),
-            'updated_at' => $this->faker->dateTimeBetween('-3 months'),
-            'created_at' => $this->faker->dateTimeBetween('-3 months'),
+            'owner_id' => User::factory()->create()->id,
+            'is_active' => true,
+            'quantity' => $quantity,
+            'quantity_available' => $quantity - $this->faker->numberBetween(0, $quantity),
+            'other_information' => json_encode([
+                'due_date' => $this->faker->dateTimeInInterval('-90 days', '+360 days')->format('Y-m-d'),
+                'code_barcode' => $this->faker->unique()->ean8(),
+            ]),
+            'name' => $this->faker->randomElement(config('products_names')),
+            'description' => $this->faker->paragraph(12),
+            'price' => $this->faker->randomFloat(2, 10),
         ];
     }
 }
